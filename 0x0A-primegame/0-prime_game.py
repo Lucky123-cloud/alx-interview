@@ -3,6 +3,7 @@
 Prime Game
 """
 
+
 def sieve_of_eratosthenes(max_num):
     """
     Uses the Sieve of Eratosthenes to find all prime numbers up to max_num.
@@ -16,7 +17,7 @@ def sieve_of_eratosthenes(max_num):
                 sieve[multiple] = False
 
     primes = [i for i, is_prime in enumerate(sieve) if is_prime]
-    return sieve
+    return primes, sieve
 
 
 def count_prime_moves(n, sieve):
@@ -45,7 +46,7 @@ def isWinner(x, nums):
         return None
 
     max_num = max(nums)
-    sieve = sieve_of_eratosthenes(max_num)
+    primes, sieve = sieve_of_eratosthenes(max_num)
 
     players = {'Maria': 0, 'Ben': 0}
 
