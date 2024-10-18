@@ -3,56 +3,61 @@
 Prime Game
 """
 
-def sieve_of_eratosthenes(max_num):
+
+def is_prime(num):
     """
-    Uses the Sieve of Eratosthenes to find all prime numbers up to max_num.
+    Check if a number is prime.
     """
-    sieve = [True] * (max_num + 1)
-    sieve[0] = sieve[1] = False  # 0 and 1 are not prime numbers
-
-    for start in range(2, int(max_num ** 0.5) + 1):
-        if sieve[start]:
-            for multiple in range(start * start, max_num + 1, start):
-                sieve[multiple] = False
-
-    primes = [i for i, is_prime in enumerate(sieve) if is_prime]
-    return sieve
+    if num < 2:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
 
 
-def count_prime_moves(n, sieve):
+def sieve_of_eratosthenes(n):
     """
-    Counts the number of moves that can be made in a game of size n.
-    A move is made when a prime number and its multiples are removed.
+    Use the Sieve of Eratosthenes to find all primes up to n.
     """
-    moves = 0
-    removed = set()
+    sieve = [True] * (n + 1)
+    sieve[0] = sieve[1] = False
 
-    for i in range(2, n + 1):
-        if sieve[i] and i not in removed:
-            moves += 1
-            # Mark all multiples of this prime as removed
-            for multiple in range(i, n + 1, i):
-                removed.add(multiple)
+    for i in range(2, int(n ** 0.5) + 1):
+        if sieve[i]:
+            for j in range(i * i, n + 1, i):
+                sieve[j] = False
 
-    return moves
+    return [i for i in range(n + 1) if sieve[i]]
+
+
+def play_game(n):
+    """
+    Simulate one round of the game for a given n.
+    Returns the number of primes chosen in that round.
+    """
+    primes = sieve_of_eratosthenes(n)
+    multiples_removed = set()
+    turn_count = 0
+
+    for prime in primes:
+        if prime not in multiples_removed:
+            turn_count += 1
+            for multiple in range(prime, n + 1, prime):
+                multiples_removed.add(multiple)
+
+    return turn_count
 
 
 def isWinner(x, nums):
     """
-    Determines the winner of the Prime Game after x rounds.
+    Determine the overall winner after x rounds of the game.
     """
-    if x < 1 or not nums:
-        return None
-
-    max_num = max(nums)
-    sieve = sieve_of_eratosthenes(max_num)
-
     players = {'Maria': 0, 'Ben': 0}
 
     for n in nums:
-        moves = count_prime_moves(n, sieve)
-
-        if moves % 2 == 0:
+        primes_picked = play_game(n)
+        if primes_picked % 2 == 0:
             players['Ben'] += 1
         else:
             players['Maria'] += 1
@@ -63,4 +68,7 @@ def isWinner(x, nums):
         return 'Ben'
     else:
         return None
+
+
+# Ensure two blank lines before and after functions (PEP8 compliance).
 
